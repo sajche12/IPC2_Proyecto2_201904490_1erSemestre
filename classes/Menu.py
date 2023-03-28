@@ -15,21 +15,27 @@ class Menu:
         no_pines = root[1][0][1].text
         no_elementos = root[1][0][2].text
         
+        print(f"nombre maquina: {nombre_maquina}")
+        print(f"no pines: {no_pines}")
+        print(f"no elementos: {no_elementos}")
+            
         nueva_maquina = Maquinas(nombre_maquina, no_pines, no_elementos)
         
-        for elementos in root.iter('elemento'):
-            numero = elementos.find('numeroAtomico').text
-            simbolo = elementos.find('simbolo').text
-            nombre = elementos.find('nombreElemento').text
+        for elemento in root.findall('./listaElementos/elemento'):
+            numero = elemento.find('numeroAtomico').text
+            simbolo = elemento.find('simbolo').text
+            nombre = elemento.find('nombreElemento').text
             nuevo_elemento = Elemento(numero, simbolo, nombre)
-            nueva_maquina.listaElementos.insertar_nodo(nuevo_elemento)
-            
-        for compuesto in root.iter('compuesto'):
+            nueva_maquina.listaElementos.insertar_nodo(nuevo_elemento)  
+        
+        
+        for compuesto in root.iter('./listaCompuestos/compuesto'):
             nombre_compuesto = compuesto.find('nombre').text
             for elemento in root.iter('elementos'):
                 simbolo = elemento.find('elemento').text
                 nuevo_compuesto = Compuesto(nombre_compuesto, simbolo)
                 nueva_maquina.listaCompuestos.insertar_nodo(nuevo_compuesto)
+        
 
         self.muestra = nueva_maquina
     
@@ -126,7 +132,7 @@ class Menu:
                 pass
             elif opcion == 2:
                 print("Seleccione el archivo a cargar...")
-                filename = askopenfilename(initialdir="C:/")
+                filename = "C:\\Users\\ACER\\Desktop\\entrada.xml"
                 xml = ET.parse(filename)
                 self.cargarXml(xml)
                 print("\n¡ARCHIVO CARGADO CORRECTAMENTE!")
