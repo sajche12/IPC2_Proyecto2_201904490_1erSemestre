@@ -1,4 +1,4 @@
-from .ListaDoble import *
+from classes.ListaDoble import *
 
 class Compuesto:
     

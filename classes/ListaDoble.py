@@ -1,25 +1,20 @@
-class Nodo: #CLASE NODO 
+class Nodo: #CLASE NODO
     def __init__(self, dato):
         self.dato = dato
         self.siguiente = None
         self.anterior = None
-        
-class ListaDoblementeEnlazada:  #CLASE LISTA DOBLEMENTE ENLAZADA
-    def __init__(self): 
-        self.nodo_inicial = None
-            
-    def insertar_nodo(self, dato):  #FUNCION PARA INGRESAR EL NODO A LA LISTA
-        if self.nodo_inicial is None:
-            nuevo_nodo = Nodo(dato)
-            self.nodo_inicial = nuevo_nodo
-            return
-        
-        auxiliar = self.nodo_inicial
-        
-        while auxiliar.siguiente is not None:
-            auxiliar = auxiliar.siguiente
-            
+
+class ListaDobleEnlazada:   #CLASE LISTA DOBLE ENLAZADA
+    def __init__(self): #METODO DE LA CABEZA DE LA LISTA
+        self.cabeza = None
+
+    def agregar_nodo(self, dato):   #METODO PARA AGREGAR NODOS A LA LISTA
         nuevo_nodo = Nodo(dato)
-        auxiliar.siguiente = nuevo_nodo
-        nuevo_nodo.anterior = auxiliar
-        
+        if not self.cabeza:
+            self.cabeza = nuevo_nodo
+        else:
+            actual = self.cabeza
+            while actual.siguiente:
+                actual = actual.siguiente
+            actual.siguiente = nuevo_nodo
+            nuevo_nodo.anterior = actual

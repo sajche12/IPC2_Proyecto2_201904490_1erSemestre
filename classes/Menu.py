@@ -1,11 +1,14 @@
 import xml.etree.ElementTree as ET
 from tkinter.filedialog import *
-from classes.Elemento import Elemento
-from classes.Maquinas import Maquinas
-from classes.Compuesto import Compuesto
+from .Elemento import Elemento
+from .Maquinas import Maquinas
+from .Compuesto import Compuesto
+from .ListaSimpleElementos import ListaElementos
 
 class Menu:
     muestra:Maquinas
+    lista_elementos:ListaElementos
+    
     
     def cargarXml(self, archivo):
         
@@ -14,10 +17,6 @@ class Menu:
         nombre_maquina = root[1][0][0].text
         no_pines = root[1][0][1].text
         no_elementos = root[1][0][2].text
-        
-        print(f"nombre maquina: {nombre_maquina}")
-        print(f"no pines: {no_pines}")
-        print(f"no elementos: {no_elementos}")
             
         nueva_maquina = Maquinas(nombre_maquina, no_pines, no_elementos)
         
@@ -26,17 +25,16 @@ class Menu:
             simbolo = elemento.find('simbolo').text
             nombre = elemento.find('nombreElemento').text
             nuevo_elemento = Elemento(numero, simbolo, nombre)
-            nueva_maquina.listaElementos.insertar_nodo(nuevo_elemento)  
+            self.lista_elementos.agregar_elemento(nuevo_elemento)
+            
+        self.lista_elementos.imprimir_elementos()
         
-        
-        for compuesto in root.iter('./listaCompuestos/compuesto'):
+        for compuesto in root.findall('./listaCompuestos/compuesto'):
             nombre_compuesto = compuesto.find('nombre').text
-            for elemento in root.iter('elementos'):
-                simbolo = elemento.find('elemento').text
-                nuevo_compuesto = Compuesto(nombre_compuesto, simbolo)
-                nueva_maquina.listaCompuestos.insertar_nodo(nuevo_compuesto)
+            simbolo = compuesto.findall('elementos/elemento')
+            nuevo_compuesto = Compuesto(nombre_compuesto, simbolo)
+            nueva_maquina.listaCompuestos.insertar_nodo(nuevo_compuesto)
         
-
         self.muestra = nueva_maquina
     
     def pedirNumeroEntero(self):    #Metodo para seleccionar una opcion en el menu
@@ -61,7 +59,8 @@ class Menu:
             opcion = self.pedirNumeroEntero()
             
             if opcion == 1:
-                pass
+                print("LISTA DE ELEMENTOS")
+                
             elif opcion == 2:
                 pass
             elif opcion == 3:
