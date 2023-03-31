@@ -18,3 +18,9 @@ class ListaDobleEnlazada:
                 actual = actual.siguiente
             actual.siguiente = nuevo_nodo
             nuevo_nodo.anterior = actual
+
+    def imprimir(self):
+        actual = self.cabeza
+        while actual:
+            print(actual.dato)
+            actual = actual.siguiente

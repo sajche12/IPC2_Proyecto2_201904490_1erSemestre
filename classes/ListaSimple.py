@@ -23,3 +23,8 @@ class ListaSimple:
             yield nodo_actual.dato
             nodo_actual = nodo_actual.siguiente
     
+    def imprimir(self):
+        actual = self.cabeza
+        while actual:
+            print(actual.dato)
+            actual = actual.siguiente
