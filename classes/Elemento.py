@@ -4,3 +4,4 @@ class Elemento:
         self.numero = numero
         self.simbolo = simbolo
         self.nombre = nombre
+        

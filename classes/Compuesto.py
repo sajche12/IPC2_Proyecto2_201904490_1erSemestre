@@ -1,5 +1,3 @@
-from classes.ListaDoble import *
-
 class Compuesto:
     
     def __init__(self, nombre_compuesto, elemento):

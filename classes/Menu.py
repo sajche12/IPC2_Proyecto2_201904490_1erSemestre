@@ -3,39 +3,45 @@ from tkinter.filedialog import *
 from .Elemento import Elemento
 from .Maquinas import Maquinas
 from .Compuesto import Compuesto
-from .ListaSimpleElementos import ListaElementos
 
 class Menu:
-    muestra:Maquinas
-    lista_elementos:ListaElementos
-    
+    maquina:Maquinas
     
     def cargarXml(self, archivo):
         
         root = archivo.getroot()
         
-        nombre_maquina = root[1][0][0].text
-        no_pines = root[1][0][1].text
-        no_elementos = root[1][0][2].text
-            
-        nueva_maquina = Maquinas(nombre_maquina, no_pines, no_elementos)
+        for maquina in root.findall('.listaMaquinas/Maquina'):
+            nombre_maquina = maquina.find('nombre').text
+            numero_pines = maquina.find('numeroPines').text
+            numero_elementos = maquina.find('numeroElementos').text
+            nueva_maquina = Maquinas(nombre_maquina, numero_pines, numero_elementos)
+            nueva_maquina.lista_maquinas(nueva_maquina)
         
-        for elemento in root.findall('./listaElementos/elemento'):
-            numero = elemento.find('numeroAtomico').text
-            simbolo = elemento.find('simbolo').text
-            nombre = elemento.find('nombreElemento').text
+        for i in root.findall('./listaElementos/elemento'):
+            numero = i.find('numeroAtomico').text
+            simbolo = i.find('simbolo').text
+            nombre = i.find('nombreElemento').text
             nuevo_elemento = Elemento(numero, simbolo, nombre)
-            self.lista_elementos.agregar_elemento(nuevo_elemento)
-            
-        self.lista_elementos.imprimir_elementos()
+            nueva_maquina.lista_elementos.agregar_nodo(nuevo_elemento)
         
         for compuesto in root.findall('./listaCompuestos/compuesto'):
             nombre_compuesto = compuesto.find('nombre').text
-            simbolo = compuesto.findall('elementos/elemento')
-            nuevo_compuesto = Compuesto(nombre_compuesto, simbolo)
-            nueva_maquina.listaCompuestos.insertar_nodo(nuevo_compuesto)
+            elemento = compuesto.findall('elementos/elemento')
+            nuevo_compuesto = Compuesto(nombre_compuesto, elemento)
+            nueva_maquina.lista_compuestos.agregar_nodo(nuevo_compuesto)
         
-        self.muestra = nueva_maquina
+        self.maquina = nueva_maquina   
+        
+    def imprimir_lista(self):
+        lista_ordenada = sorted(self.maquina.lista_elementos, key=lambda x: x.numero)
+        iterable = iter(lista_ordenada)
+        for elemento in iterable:
+            print("-------------------------")
+            print(f"Numero: {getattr(elemento, 'numero', 'NA')}")
+            print(f"Simbolo: {getattr(elemento, 'simbolo', 'NA')}")
+            print(f"Nombre: {getattr(elemento, 'nombre', 'NA')}")
+            print("-------------------------")
     
     def pedirNumeroEntero(self):    #Metodo para seleccionar una opcion en el menu
         correcto=False
@@ -59,8 +65,8 @@ class Menu:
             opcion = self.pedirNumeroEntero()
             
             if opcion == 1:
-                print("LISTA DE ELEMENTOS")
-                
+                print("\nLISTA DE ELEMENTOS")
+                self.imprimir_lista()
             elif opcion == 2:
                 pass
             elif opcion == 3:

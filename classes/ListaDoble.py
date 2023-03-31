@@ -1,14 +1,14 @@
-class Nodo: #CLASE NODO
+class Nodo: 
     def __init__(self, dato):
         self.dato = dato
         self.siguiente = None
         self.anterior = None
 
-class ListaDobleEnlazada:   #CLASE LISTA DOBLE ENLAZADA
-    def __init__(self): #METODO DE LA CABEZA DE LA LISTA
+class ListaDobleEnlazada:   
+    def __init__(self): 
         self.cabeza = None
 
-    def agregar_nodo(self, dato):   #METODO PARA AGREGAR NODOS A LA LISTA
+    def agregar_nodo(self, dato):   
         nuevo_nodo = Nodo(dato)
         if not self.cabeza:
             self.cabeza = nuevo_nodo
