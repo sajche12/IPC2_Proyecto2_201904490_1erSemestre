@@ -6,6 +6,7 @@ class Nodo:
 class ListaSimple:    
     def __init__(self):
         self.cabeza = None
+        self.tamano = 0
 
     def agregar_nodo(self, dato):    
         nuevo_nodo = Nodo(dato)
@@ -16,6 +17,7 @@ class ListaSimple:
             while nodo_actual.siguiente is not None:
                 nodo_actual = nodo_actual.siguiente
             nodo_actual.siguiente = nuevo_nodo
+        self.tamano += 1
     
     def __iter__(self):
         nodo_actual = self.cabeza
@@ -23,8 +25,11 @@ class ListaSimple:
             yield nodo_actual.dato
             nodo_actual = nodo_actual.siguiente
     
-    def imprimir(self):
+    def buscar_por_indice(self, indice):
         actual = self.cabeza
-        while actual:
-            print(actual.dato)
+        i = 0
+        while actual is not None:
+            if i == indice:
+                return actual.dato
             actual = actual.siguiente
+            i += 1
