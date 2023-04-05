@@ -27,7 +27,7 @@ class ListaSimple:
     
     def buscar_por_indice(self, indice):
         actual = self.cabeza
-        i = 0
+        i = 1
         while actual is not None:
             if i == indice:
                 return actual.dato

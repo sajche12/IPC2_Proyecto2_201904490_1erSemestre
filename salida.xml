@@ -1,21 +1,19 @@
-<?xml version="1.0"?> 
 <RESPUESTA> 
 	<listaCompuestos> 
 		<compuesto> 
-			<nombre>[valorAlfanumerico]</nombre> 
-			<maquina>[valorAlfanumerico]</maquina> 
-			<tiempoOptimo>[valorNumerico]</tiempoOptimo> 
+			<nombre>Compuesto 1</nombre> 
+			<maquina>Maquina 2</maquina> 
+			<tiempoOptimo>7</tiempoOptimo> 
 			<instrucciones> 
 				<tiempo> 
-					<numeroSegundo>[valorNumerico]</numeroSegundo> 
+					<numeroSegundo>7</numeroSegundo> 
 					<acciones> 
 						<accionPin> 
-							<numeroPin>[valorNumerico]<numeroPin> 
-							<accion>[valorAlfanumerico]</accion> 
-						</accionPin> ... 
+						<numeroPin>1</numeroPin><accion>Mover adelante</accion>
+						</accionPin> 
 					</acciones> 
-				</tiempo> ... 
+				</tiempo>
 			</instrucciones> 
-		</compuesto> ... 
+		</compuesto>
 	</listaCompuestos> 
 </RESPUESTA>

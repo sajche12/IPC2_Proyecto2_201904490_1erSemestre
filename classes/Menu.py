@@ -4,15 +4,20 @@ from tkinter import filedialog
 from .Elemento import Elemento
 from .Maquinas import Maquinas
 from .Compuesto import Compuesto
+from .ListaSimple import ListaSimple
+from .Pin import Pin
 import random
 
 class Menu:
     maquina:Maquinas
+    elementos:Compuesto
+    accion = Pin()
     
     def cargarXml(self, archivo):
         
         root = archivo.getroot()
         
+        self.lista_maquinas = ListaSimple()
         for maquina in root.findall('./listaMaquinas/Maquina'):
             nombre_maquina = maquina.find('nombre').text
             numero_pines = maquina.find('numeroPines').text
@@ -20,7 +25,7 @@ class Menu:
             numero_elementos = maquina.find('numeroElementos').text
             int(numero_elementos)
             nueva_maquina = Maquinas(nombre_maquina, numero_pines, numero_elementos)
-            nueva_maquina.lista_maquinas.agregar_nodo(nueva_maquina)
+            self.lista_maquinas.agregar_nodo(nueva_maquina)
         
         for i in root.findall('./listaElementos/elemento'):
             numero = i.find('numeroAtomico').text
@@ -29,14 +34,14 @@ class Menu:
             nombre = i.find('nombreElemento').text
             nuevo_elemento = Elemento(numero, simbolo, nombre)
             nueva_maquina.lista_elementos.agregar_nodo(nuevo_elemento)
-            
+        
         for compuesto in root.findall('./listaCompuestos/compuesto'):
             nombre_compuesto = compuesto.find('nombre').text
-            self.elementos = []
+            lista = []
             for elemento in compuesto.findall('elementos/elemento'):
-                self.elementos.append(elemento.text)
-                tiempo = len(self.elementos)
-            nuevo_compuesto = Compuesto(nombre_compuesto, self.elementos, tiempo)
+                lista.append(elemento.text)
+                tiempo = len(lista)
+            nuevo_compuesto = Compuesto(nombre_compuesto, lista, tiempo)
             nueva_maquina.lista_compuestos.insertar(nuevo_compuesto)
             
         self.maquina = nueva_maquina   
@@ -45,17 +50,32 @@ class Menu:
         
         tree = ET.parse("C:\\Users\\ACER\\Desktop\\Proyecto2\\salida.xml")
         root = tree.getroot()
+       
+        for compuesto in root.findall('./listaCompuestos/compuesto'):
+            maquina = self.lista_maquinas.buscar_por_indice(self.numero_maquina)
+            nombre_maquina = maquina.nombre
+            compuesto.find('nombre').text = f'{self.maquina.lista_compuestos.buscar_por_indice(self.numero_compuesto).nombre_compuesto}'
+            compuesto.find('maquina').text = f'{nombre_maquina}'
+            compuesto.find('tiempoOptimo').text = f'{self.maquina.lista_compuestos.buscar_por_indice(self.numero_compuesto).tiempo+1}'
         
-        for compuesto in root.iter("./listaCompuestos/compuesto"):
-            if compuesto.tag == "nombre":
-                compuesto.text = f"{self.maquina.lista_compuestos.buscar_por_indice(self.numero_compuesto).nombre_compuesto}"
-            if compuesto.tag == "maquina":
-                compuesto.text = f"{self.maquina.lista_maquinas.buscar_por_indice(self.numero_maquina).nombre}"
-            if compuesto.tag == "tiempoOptimo":
-                compuesto.tag = f"{self.maquina.lista_compuestos.buscar_por_indice(self.numero_compuesto).tiempo}"
+        for tiempo in root.findall('./listaCompuestos/compuesto/instrucciones/tiempo'):
+            tiempo.find('numeroSegundo').text = f'{self.maquina.lista_compuestos.buscar_por_indice(self.numero_compuesto).tiempo+1}'
+        
+        for self.accion in root.findall('./listaCompuestos/compuesto/instrucciones/tiempo/self.acciones/self.accionPin'):
+            for i in self.accion.lista_instrucciones:
+                for j in self.conteo_pines:
+                    numero_pin = ET.SubElement(self.accion, 'numeroPin')
+                    numero_pin.text = f'{j}'
+            
+                    self.accion = ET.SubElement(self.accion, 'self.accion')
+                    self.accion.text = "Mover adelante"
+                
+            
+            # self.accion.find('numeroPin').text = ""
+            # self.accion.find('self.accion').text = ""
         
         tree.write("C:\\Users\\ACER\\Desktop\\Proyecto2\\salida.xml")
-            
+        print("\n¡EL ARCHIVO SE CREO CORRECTAMENTE!")   
                 
     def imprimir_elementos(self):
         lista_ordenada = sorted(self.maquina.lista_elementos, key=lambda x: int(x.numero))
@@ -72,9 +92,9 @@ class Menu:
             print(f"Nombre: {getattr(compuesto, 'nombre_compuesto', 'NA')}")
             print(f"Elementos: {getattr(compuesto, 'elemento', 'NA')}")
             print("---------------------")
-    
+                
     def imprimir_maquinas(self):
-        for maquina in self.maquina.lista_maquinas:
+        for maquina in self.lista_maquinas:
             print("-------------------------")
             print(f"Nombre: {getattr(maquina, 'nombre', 'NA')}")
             print(f"Pines: {getattr(maquina, 'no_pines', 'NA')}")
@@ -82,7 +102,7 @@ class Menu:
             print("-------------------------")
     
     def agregar_elemento(self):
-        numero = int(input("Ingresa el numero atomico del elemento: "))
+        numero = int(input("\nIngresa el numero atomico del elemento: "))
         simbolo = input("Ingresa el simbolo del elemento: ")
         nombre = input("Ingresa el nombre del elemento: ")
         nuevo_elemento = Elemento(numero, simbolo, nombre)
@@ -102,7 +122,7 @@ class Menu:
     def gestion_elementos(self):
         regresar = False
         while not regresar:
-            print("1. Ver lista de elementos quimicos")
+            print("\n1. Ver lista de elementos quimicos")
             print("2. Agregar nuevo elemento quimico")
             print("3. Regresar al Menu Principal")
             print ("\nElige una opcion")
@@ -119,6 +139,8 @@ class Menu:
                 continue
     
     def analizar_compuesto(self):
+        
+        
         print("\nLISTA DE COMPUESTOS")
         i = 1
         for compuesto in self.maquina.lista_compuestos:
@@ -129,22 +151,75 @@ class Menu:
             i += 1
         self.numero_compuesto = int(input("\nEscriba el numero del compuesto: "))
         compuesto_analizar = self.maquina.lista_compuestos.buscar_por_indice(self.numero_compuesto)
+        #print(f"Numero de instrucciones: {len(compuesto_analizar.elemento)+1}")
+        # for i in range(1, len(compuesto_analizar.elemento+1)):
+        #     self.accion.lista_instrucciones.agregar_nodo(i)
+        
+        
+        input("\nPresione enter para continuar...")
         
         print("\nLISTADO DE MAQUINAS")
         j = 1
-        for maquina in self.maquina.lista_maquinas:
+        for maquina in self.lista_maquinas:
             print("-------------------------")
             print(f"{j}. Nombre: {getattr(maquina, 'nombre', 'NA')}")
             tiempo = self.maquina.lista_compuestos.buscar_por_indice(self.numero_compuesto).tiempo
             print(f"Tiempo: {tiempo + 1} segundos")
+            print(f"Numero de Pines: {getattr(maquina, 'no_pines', 'NA')}")
             print("-------------------------")
             j += 1
         self.numero_maquina = int(input("\nEscriba el numero de la maquina con la cual trabajara: "))
-        maquina_analizar = self.maquina.lista_maquinas.buscar_por_indice(self.numero_maquina)
+        #maquina_analizar = self.lista_maquinas.buscar_por_indice(self.numero_maquina)
+        # for j in range(1, tiempo + 1):
+        #     self.accion.lista_pines.agregar_nodo(j)
+            
         input("\nPresione enter para continuar...")
         
         print(f'\nTiempo optimo para construir "{compuesto_analizar.nombre_compuesto}" es de: {tiempo + 1} segundos\n')
-        print(f"Instrucciones para construir el compuesto {compuesto_analizar.nombre_compuesto}:")
+        print(f'Instrucciones para construir el compuesto "{compuesto_analizar.nombre_compuesto}":\n')
+        
+        n = int(self.lista_maquinas.buscar_por_indice(self.numero_maquina).no_pines)+1
+        self.conteo_pines = n
+        m = int(tiempo)+2
+        self.conteo_instrucciones = m
+        funciones = ['Mover adelante', 'Mover atras', 'Esperar']
+        elementos_fusionar = self.maquina.lista_compuestos.buscar_por_indice(self.numero_compuesto).elemento
+        list(elementos_fusionar)
+        
+        for i in range(1, m):
+            print("---------------------")
+            print(f"Segundo {i}")
+            for j in range(1, n):
+                if i == 1:
+                    print(f"Pin {j}", end="|")
+                    print(self.accion.mover_adelante)
+                    instruccion = self.accion.mover_adelante
+                    self.accion.lista_instrucciones.agregar_nodo(instruccion)
+                elif i % 2 == 0:
+                    print(f"Pin {j}", end="|")
+                    instruccion = f"Fusionar {list(elementos_fusionar)[i-2]}"
+                    self.accion.lista_instrucciones.agregar_nodo(instruccion)
+                    print(instruccion)
+                    for k in range(j+1, n):
+                        print(f"Pin {k}", end="|")
+                        instruccion = random.choice(funciones)
+                        self.accion.lista_instrucciones.agregar_nodo(instruccion)
+                        print(instruccion)
+                    break
+                else:
+                    for k in range(j, n-1):
+                        instruccion = random.choice(funciones)
+                        self.accion.lista_instrucciones.agregar_nodo(instruccion)
+                        print(f"Pin {k}", end="|")
+                        print(instruccion)
+                    print(f"Pin {k+1}", end="|")
+                    instruccion = f"Fusionar {list(elementos_fusionar)[i-2]}"
+                    self.accion.lista_instrucciones.agregar_nodo(instruccion)
+                    print(instruccion)
+                    break
+            print("---------------------\n")
+                
+        input("\nPresione enter para continuar...")
         
     def gestion_compuestos(self):
         regresar = False
@@ -166,10 +241,13 @@ class Menu:
                 continue
         
     def abrir_archivo(self):
-        filename = "C:\\Users\\ACER\\Desktop\\Proyecto2\\entrada.xml"
-        #filename = filedialog.askopenfilename()
+        #filename = "C:\\Users\\ACER\\Desktop\\Proyecto2\\entrada.xml"
+        filename = filedialog.askopenfilename()
         xml = ET.parse(filename)
         self.cargarXml(xml)
+    
+    def archivo_graphviz(self):
+        pass
     
     def menu(self): #Menu con las opciones a elejir
         salir = False

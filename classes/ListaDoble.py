@@ -7,6 +7,7 @@ class Nodo:
 class ListaDobleEnlazada:   
     def __init__(self): 
         self.cabeza = None
+        self.tamano = 0
 
      # Insertar al final de la lista
     def insertar(self, data):
@@ -19,6 +20,7 @@ class ListaDobleEnlazada:
                 actual = actual.siguiente
             actual.siguiente = nuevo_nodo
             nuevo_nodo.anterior = actual
+        self.tamano += 1
 
     def __iter__(self):
         nodo_actual = self.cabeza
@@ -34,3 +36,4 @@ class ListaDobleEnlazada:
                 return actual.dato
             actual = actual.siguiente
             i += 1
+            
