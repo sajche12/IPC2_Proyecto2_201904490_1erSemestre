@@ -6,6 +6,7 @@ from .Maquinas import Maquinas
 from .Compuesto import Compuesto
 from .ListaSimple import ListaSimple
 from .Pin import Pin
+from .ListaDoble import ListaDobleEnlazada
 import random
 
 class Menu:
@@ -105,8 +106,16 @@ class Menu:
         numero = int(input("\nIngresa el numero atomico del elemento: "))
         simbolo = input("Ingresa el simbolo del elemento: ")
         nombre = input("Ingresa el nombre del elemento: ")
-        nuevo_elemento = Elemento(numero, simbolo, nombre)
-        self.maquina.lista_elementos.agregar_nodo(nuevo_elemento)
+        encontrado = False
+        for elemento in self.maquina.lista_elementos:
+            if (int(elemento.numero) == numero) or (elemento.simbolo == simbolo) or (elemento.nombre == nombre):
+                print("\nEl elemento ya se encuentra en la lista")
+                encontrado = True
+                break
+            
+        if not encontrado:
+            nuevo_elemento = Elemento(numero, simbolo, nombre)
+            self.maquina.lista_elementos.agregar_nodo(nuevo_elemento)
     
     def pedirNumeroEntero(self):    #Metodo para seleccionar una opcion en el menu
         correcto=False
@@ -139,7 +148,6 @@ class Menu:
                 continue
     
     def analizar_compuesto(self):
-        
         
         print("\nLISTA DE COMPUESTOS")
         i = 1
@@ -249,6 +257,22 @@ class Menu:
     def archivo_graphviz(self):
         pass
     
+    def eliminar_contenido(self):
+        # Eliminar todas las máquinas
+        self.lista_maquinas = ListaSimple()
+
+        # Eliminar todos los elementos
+        for maquina in self.lista_maquinas:
+            maquina.lista_elementos = ListaSimple()
+
+        # Eliminar todos los compuestos
+        for maquina in self.lista_maquinas:
+            for elemento in maquina.lista_elementos:
+                elemento.lista_compuestos = ListaDobleEnlazada()
+
+        # Establecer la máquina activa en nula
+        self.maquina = None
+    
     def menu(self): #Menu con las opciones a elejir
         salir = False
         opcion = 0
@@ -270,7 +294,8 @@ class Menu:
  
             if opcion == 1:
                 #Inicializacion
-                pass
+                self.eliminar_contenido()
+                print("\nLOS DATOS CARGADOS SE ELIMINARON CORRECTAMENTE")
             elif opcion == 2:
                 #Generar archivo de entrada
                 print("Seleccione el archivo a cargar...")
